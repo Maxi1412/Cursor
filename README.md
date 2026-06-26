@@ -9,7 +9,7 @@ cd C:\Users\acer\Documents\Claude\Projects\Cursor
 npm install
 npm run george:setup          # integrate into Personal_caledar automatically
 npm run orchestra:start       # start desktop coordinator
-npm run george:build-deploy   # build APK → local + Google Drive + NAS
+npm run george:full-deploy     # build APK v2.19.0 → local + K: drive
 ```
 
 See **[docs/QUICKSTART.md](docs/QUICKSTART.md)** for the shortest test sequence.
@@ -27,10 +27,12 @@ See **[docs/QUICKSTART.md](docs/QUICKSTART.md)** for the shortest test sequence.
 
 Edit `george-orchestra.config.json` if your path differs.
 
-## Google Drive deploy
+## Google Drive deploy (K: drive)
 
-APK + orchestra bundle auto-copied to:
-`Google Drive\Application Projects\personal calendar\`
+APK auto-copied to:
+`K:\Application Projects\personal calendar\Personal_Calendar_v2.19.0.apk`
+
+Google Drive account: **maxscheurer85@gmail.com** (mapped as **K:** in This PC)
 
 Also copies to Synology/NAS if mapped drives are detected.
 

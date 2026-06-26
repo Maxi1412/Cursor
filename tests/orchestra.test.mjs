@@ -149,10 +149,11 @@ describe('George integration artifacts', () => {
     assert.ok(config.triggers.activate.length > 0);
   });
 
-  it('replace-gdrive script exists', () => {
-    const content = readFileSync(join(ROOT, 'scripts/replace-gdrive-apk.ps1'), 'utf8');
+  it('replace-kdrive script exists', () => {
+    const content = readFileSync(join(ROOT, 'scripts/replace-kdrive-apk.ps1'), 'utf8');
     assert.ok(content.includes('2.18'));
     assert.ok(content.includes('Personal_Calendar_v'));
+    assert.ok(content.includes('K:\\'));
   });
 
   it('config specifies v2.19.0 and exact G drive path', () => {
