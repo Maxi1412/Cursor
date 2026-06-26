@@ -1,4 +1,4 @@
-# Detect Google Drive (G:), Synology NAS, and mapped drives for APK deploy
+# Detect Google Drive on G: (and K: if mapped), Synology NAS, mapped drives
 param(
     [string]$GoogleFolder = "Application Projects\personal calendar",
     [string]$Account = "SCHEUERER85@gmail.com"
@@ -18,33 +18,20 @@ function Ensure-Folder($path) {
     }
 }
 
-# Google Drive Desktop — all common mount points including G: drive
-$driveCandidates = @(
-    "G:\My Drive",
-    "G:\",
-    "$env:USERPROFILE\Google Drive\My Drive",
-    "$env:USERPROFILE\Google Drive",
-    "$env:USERPROFILE\My Drive",
-    "H:\My Drive",
-    "H:\Google Drive"
-)
-
-foreach ($base in $driveCandidates) {
-    if (Test-Path $base -ErrorAction SilentlyContinue) {
-        $appProjects = Join-Path $base "Application Projects"
-        Ensure-Folder $appProjects
-        $target = Join-Path $appProjects "personal calendar"
-        Ensure-Folder $target
-        Add-DeployPath "GoogleDrive" $target $base
-    }
+# PRIMARY: G:\Application Projects\personal calendar (user's exact path)
+$primaryG = "G:\Application Projects\personal calendar"
+if (Test-Path "G:\") {
+    Ensure-Folder (Split-Path $primaryG -Parent)
+    Ensure-Folder $primaryG
+    Add-DeployPath "G-Drive-Primary" $primaryG "G:\"
 }
 
-# Also check G: drive root directly (user mentioned "G drive")
-if (Test-Path "G:\" -ErrorAction SilentlyContinue) {
-    $gTarget = "G:\Application Projects\personal calendar"
-    Ensure-Folder (Split-Path $gTarget -Parent)
-    Ensure-Folder $gTarget
-    Add-DeployPath "G-Drive" $gTarget "G:\"
+# K: drive (user mentioned "K for Kilo" — may be alternate Google Drive letter)
+if (Test-Path "K:\") {
+    $kTarget = "K:\Application Projects\personal calendar"
+    Ensure-Folder (Split-Path $kTarget -Parent)
+    Ensure-Folder $kTarget
+    Add-DeployPath "K-Drive" $kTarget "K:\"
 }
 
 # Synology / mapped network drives

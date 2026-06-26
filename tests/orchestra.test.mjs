@@ -148,6 +148,22 @@ describe('George integration artifacts', () => {
     assert.ok(config.conversation.allOnline);
     assert.ok(config.triggers.activate.length > 0);
   });
+
+  it('replace-gdrive script exists', () => {
+    const content = readFileSync(join(ROOT, 'scripts/replace-gdrive-apk.ps1'), 'utf8');
+    assert.ok(content.includes('2.18'));
+    assert.ok(content.includes('Personal_Calendar_v'));
+  });
+
+  it('config specifies v2.19.0 and exact G drive path', () => {
+    const config = JSON.parse(
+      readFileSync(join(ROOT, 'george-orchestra.config.json'), 'utf8')
+    );
+    assert.equal(config.app.version, '2.19.0');
+    assert.equal(config.app.previousVersion, '2.18.0');
+    assert.equal(config.deploy.apkFileName, 'Personal_Calendar_v2.19.0.apk');
+    assert.equal(config.deploy.googleDrive.fullPath, 'G:\\Application Projects\\personal calendar');
+  });
 });
 
 describe('Deploy scripts exist', () => {

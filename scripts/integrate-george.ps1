@@ -37,8 +37,10 @@ Write-Host "  -> $orchestraDest"
 
 # 3. Patch speech handler
 if (-not $SkipPatch) {
-    Write-Host "[3/5] Patching George speech handler..." -ForegroundColor Yellow
+    Write-Host "[3/6] Patching George speech handler..." -ForegroundColor Yellow
     node (Join-Path $CursorPath "scripts\patch-george-speech.mjs") $GeorgePath $ConfigPath
+    Write-Host "[3b/6] Patching George version to 2.19.0..." -ForegroundColor Yellow
+    node (Join-Path $CursorPath "scripts\patch-george-version.mjs") $GeorgePath
 } else {
     Write-Host "[3/5] Skipping speech patch (--SkipPatch)" -ForegroundColor DarkYellow
 }
@@ -80,7 +82,7 @@ $manifest = @{
     integratedAt = (Get-Date -Format "o")
     cursorRepo = $CursorPath
     georgeProject = $GeorgePath
-    version = "1.0.0"
+    version = "2.19.0"
 } | ConvertTo-Json
 Set-Content (Join-Path $orchestraDest "integration-manifest.json") $manifest
 

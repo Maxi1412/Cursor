@@ -13,6 +13,7 @@
     "george:verify": "powershell -ExecutionPolicy Bypass -File scripts/verify-firebase.ps1",
     "george:build-deploy": "powershell -ExecutionPolicy Bypass -File scripts/build-deploy-george.ps1",
     "george:full-deploy": "powershell -ExecutionPolicy Bypass -File scripts/full-deploy.ps1",
+    "george:replace-gdrive": "powershell -ExecutionPolicy Bypass -File scripts/replace-gdrive-apk.ps1",
     "george:check-deps": "powershell -ExecutionPolicy Bypass -File scripts/check-deps.ps1",
     "test": "node --import tsx --test tests/**/*.test.mjs",
     "test:all": "bash scripts/run-all-tests.sh",

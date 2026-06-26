@@ -2,20 +2,35 @@
   "georgeProjectPath": "C:\\Users\\acer\\Documents\\Claude\\Projects\\Personal_caledar",
   "cursorRepoPath": "C:\\Users\\acer\\Documents\\Claude\\Projects\\Cursor",
   "desktopId": "any",
+  "app": {
+    "name": "Personal Calendar",
+    "packageName": "personal_calendar",
+    "version": "2.19.0",
+    "versionCode": 219,
+    "previousVersion": "2.18.0"
+  },
   "firebase": {
     "projectId": "",
     "serviceAccountPath": ""
   },
   "deploy": {
     "localBuildDir": "builds",
+    "apkFileName": "Personal_Calendar_v2.19.0.apk",
     "googleDrive": {
       "enabled": true,
       "account": "SCHEUERER85@gmail.com",
-      "folderPath": "Application Projects\\personal calendar"
+      "driveLetter": "G:",
+      "folderPath": "Application Projects\\personal calendar",
+      "fullPath": "G:\\Application Projects\\personal calendar"
     },
+    "deletePreviousPatterns": [
+      "*2.18.0*",
+      "*2.18*",
+      "George-orchestra-*.apk"
+    ],
     "synology": {
       "enabled": true,
-      "searchPatterns": ["\\\\synology", "\\\\NAS", "Z:\\", "Y:\\"]
+      "searchPatterns": ["\\\\synology", "\\\\NAS", "Z:\\", "Y:\\", "K:\\"]
     },
     "extraPaths": []
   },
