@@ -14,6 +14,7 @@
     "george:build-deploy": "powershell -ExecutionPolicy Bypass -File scripts/build-deploy-george.ps1",
     "george:full-deploy": "powershell -ExecutionPolicy Bypass -File scripts/full-deploy.ps1",
     "george:deploy": "node scripts/deploy.mjs",
+    "george:trigger-deploy": "tsx scripts/trigger-deploy.mjs",
     "george:replace-kdrive": "powershell -ExecutionPolicy Bypass -File scripts/replace-kdrive-apk.ps1",
     "george:check-deps": "powershell -ExecutionPolicy Bypass -File scripts/check-deps.ps1",
     "test": "node --import tsx --test tests/**/*.test.mjs",

@@ -15,6 +15,7 @@ import type {
 } from '../shared/types.js';
 import { runHealthCheck, formatHealthSummary, type HealthCheckResult } from './health-check.js';
 import { executeDelegation } from './delegates.js';
+import { runFullDeploy, getExpectedApkPaths } from './run-full-deploy.js';
 import {
   initFirebase,
   writeDesktopHeartbeat,
@@ -54,6 +55,13 @@ export class OrchestraCoordinator {
 
     this.unsubscribe = listenForCommands(DESKTOP_ID, (cmd) => this.handleCommand(cmd));
     console.log('[orchestra] Listening for commands from George...');
+
+    if (process.env.ORCHESTRA_AUTO_DEPLOY === '1') {
+      console.log('[orchestra] ORCHESTRA_AUTO_DEPLOY=1 — starting full deploy...');
+      runFullDeploy()
+        .then((r) => console.log(r.success ? `[orchestra] Deploy OK: ${r.apkPath}` : `[orchestra] Deploy failed: ${r.error}`))
+        .catch(console.error);
+    }
   }
 
   async stop(): Promise<void> {
@@ -109,6 +117,8 @@ export class OrchestraCoordinator {
         return this.handleContinueProject(base, command);
       case 'deactivate':
         return this.handleDeactivate(base, command);
+      case 'full_deploy':
+        return this.handleFullDeploy(base, command);
       default:
         return {
           ...base,
@@ -251,6 +261,28 @@ export class OrchestraCoordinator {
         : 'Please tell me which project to continue. You can say the project name.',
       phase: 'awaiting_project_description',
       projectId,
+    };
+  }
+
+  private async handleFullDeploy(
+    base: Omit<OrchestraResponse, 'message' | 'phase'>,
+    command: OrchestraCommand
+  ): Promise<OrchestraResponse> {
+    const paths = getExpectedApkPaths();
+    const result = await runFullDeploy();
+
+    if (result.success) {
+      return {
+        ...base,
+        message: `Deploy complete. Personal_Calendar v2.19.0 built and copied to local builds and K: drive. APK: ${paths.fileName}. Local: ${paths.local}. K: ${paths.kDrive}`,
+        phase: 'completed',
+      };
+    }
+
+    return {
+      ...base,
+      message: `Deploy failed: ${result.error ?? 'unknown'}. Output: ${result.output.slice(-800)}`,
+      phase: 'error',
     };
   }
 

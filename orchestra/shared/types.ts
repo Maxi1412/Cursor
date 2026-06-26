@@ -29,7 +29,8 @@ export type CommandType =
   | 'continue_project'
   | 'status'
   | 'cancel'
-  | 'task_update';
+  | 'task_update'
+  | 'full_deploy';
 
 export type TaskStatus =
   | 'pending'
