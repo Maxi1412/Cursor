@@ -1,6 +1,6 @@
 # George Orchestra — Quick Start (minimal commands)
 
-## One-time setup (run on Windows desktop)
+## One-time + full deploy (run on Windows desktop)
 
 ```powershell
 cd C:\Users\acer\Documents\Claude\Projects\Cursor
@@ -8,14 +8,19 @@ copy .env.example .env
 # Edit .env: set FIREBASE_PROJECT_ID + GOOGLE_APPLICATION_CREDENTIALS
 
 npm install
-npm run george:setup
+npm run george:full-deploy
 ```
 
-This automatically:
-- Copies orchestra module into `Personal_caledar\orchestra\`
-- Patches George speech handler + App.tsx
-- Merges Firestore rules
-- Verifies Firebase project IDs match
+Or double-click `DEPLOY-GEORGE.bat` in the Cursor repo folder.
+
+`george:full-deploy` automatically:
+1. Checks all dependencies (Node, Java, Android SDK, George project, Google Drive)
+2. Integrates orchestra into `Personal_caledar`
+3. Runs 22 backend tests
+4. Verifies Firebase config
+5. Builds release APK
+6. Copies APK to `Personal_caledar\builds\`, `G:\Application Projects\personal calendar\`, and NAS if detected
+7. Saves `George-orchestra-latest.apk` in each location
 
 ## Desktop (every session)
 

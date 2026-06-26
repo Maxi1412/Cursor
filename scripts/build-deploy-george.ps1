@@ -47,7 +47,16 @@ if (-not (Test-Path $apkFull)) {
 $apkName = "George-orchestra-$Variant-$timestamp.apk"
 $localApk = Join-Path $localBuildDir $apkName
 Copy-Item $apkFull $localApk -Force
-Write-Host "  Local APK: $localApk" -ForegroundColor Green
+
+# Also save as latest for easy install
+$latestApk = Join-Path $localBuildDir "George-orchestra-latest.apk"
+Copy-Item $localApk $latestApk -Force
+
+$apkSize = (Get-Item $localApk).Length
+$apkHash = (Get-FileHash $localApk -Algorithm SHA256).Hash
+Write-Host "  Local APK: $localApk ($([math]::Round($apkSize/1MB, 2)) MB)" -ForegroundColor Green
+Write-Host "  Latest:    $latestApk" -ForegroundColor Green
+Write-Host "  SHA256:    $apkHash" -ForegroundColor DarkGray
 
 # Copy orchestra config + manifest alongside APK
 $orchestraDir = Join-Path $GeorgePath "orchestra"
@@ -70,6 +79,8 @@ foreach ($target in $storagePaths) {
     try {
         $destApk = Join-Path $target.Path $apkName
         Copy-Item $localApk $destApk -Force
+        # Also copy as latest
+        Copy-Item $localApk (Join-Path $target.Path "George-orchestra-latest.apk") -Force
         Write-Host "  -> $($target.Type): $destApk" -ForegroundColor Green
         $deployed += $destApk
 
@@ -78,6 +89,11 @@ foreach ($target in $storagePaths) {
             if (Test-Path $destOrchestra) { Remove-Item $destOrchestra -Recurse -Force }
             Copy-Item $orchestraDir $destOrchestra -Recurse -Force
         }
+
+        # Verify copy
+        if (-not (Test-Path $destApk)) { throw "Copy verification failed" }
+        $destSize = (Get-Item $destApk).Length
+        if ($destSize -ne $apkSize) { throw "Size mismatch: $destSize vs $apkSize" }
     } catch {
         Write-Host "  SKIP $($target.Type): $($_.Exception.Message)" -ForegroundColor DarkYellow
     }
@@ -89,8 +105,12 @@ $logPath = Join-Path $localBuildDir "deploy-$timestamp.json"
     timestamp = $timestamp
     variant = $Variant
     localApk = $localApk
+    latestApk = $latestApk
+    sha256 = $apkHash
+    sizeBytes = $apkSize
     deployedTo = $deployed
     storageTargets = $storagePaths
+    verified = ($deployed.Count -gt 0)
 } | ConvertTo-Json -Depth 5 | Set-Content $logPath
 
 Write-Host "`nDeploy complete. Log: $logPath" -ForegroundColor Green
