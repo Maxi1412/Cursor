@@ -1,0 +1,36 @@
+{
+  "name": "george-orchestra-coordinator",
+  "version": "1.0.0",
+  "description": "Desktop coordinator for George Orchestra / Project Management mode",
+  "type": "module",
+  "scripts": {
+    "orchestra:start": "tsx orchestra/desktop/index.ts",
+    "orchestra:health": "tsx orchestra/desktop/health-cli.ts",
+    "orchestra:test-firebase": "node scripts/test-firebase-e2e.mjs",
+    "george:prepare": "node scripts/prepare-george-orchestra.mjs",
+    "george:integrate": "powershell -ExecutionPolicy Bypass -File scripts/integrate-george.ps1",
+    "george:setup": "powershell -ExecutionPolicy Bypass -File scripts/one-click-setup.ps1",
+    "george:verify": "powershell -ExecutionPolicy Bypass -File scripts/verify-firebase.ps1",
+    "george:build-deploy": "powershell -ExecutionPolicy Bypass -File scripts/build-deploy-george.ps1",
+    "george:full-deploy": "powershell -ExecutionPolicy Bypass -File scripts/full-deploy.ps1",
+    "george:deploy": "node scripts/deploy.mjs",
+    "george:trigger-deploy": "tsx scripts/trigger-deploy.mjs",
+    "george:replace-kdrive": "powershell -ExecutionPolicy Bypass -File scripts/replace-kdrive-apk.ps1",
+    "george:check-deps": "powershell -ExecutionPolicy Bypass -File scripts/check-deps.ps1",
+    "test": "node --import tsx --test tests/**/*.test.mjs",
+    "test:all": "bash scripts/run-all-tests.sh",
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

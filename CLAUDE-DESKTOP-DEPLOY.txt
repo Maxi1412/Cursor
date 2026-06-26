@@ -1,0 +1,26 @@
+# COPY THIS ENTIRE BLOCK INTO CLAUDE DESKTOP AND SEND AS ONE MESSAGE
+# Claude Desktop runs on Max's Windows PC with access to K: drive and George project.
+
+Run this exact PowerShell command on my Windows machine now. Do not ask questions. Execute it and report the full output including CONFIRMED line and SHA256 hash.
+
+```
+cd C:\Users\acer\Documents\Claude\Projects\Cursor
+git pull origin cursor/orchestra-mode-04a0
+npm install
+npm run george:full-deploy
+```
+
+Expected result:
+- Builds Personal_Calendar_v2.19.0.apk
+- Saves to C:\Users\acer\Documents\Claude\Projects\Personal_caledar\builds\
+- Deletes old v2.18.0 from K:\Application Projects\personal calendar
+- Copies new APK to K:\Application Projects\personal calendar\Personal_Calendar_v2.19.0.apk
+- Prints: CONFIRMED: K: drive updated to v2.19.0
+
+After deploy, verify the file exists:
+```
+dir "K:\Application Projects\personal calendar\*.apk"
+dir "C:\Users\acer\Documents\Claude\Projects\Personal_caledar\builds\*.apk"
+```
+
+Report exact file names, sizes, and dates.

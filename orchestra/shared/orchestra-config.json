@@ -1,0 +1,241 @@
+{
+  "version": "1.0.0",
+  "modeName": "Project Management / Orchestra Mode",
+  "triggers": {
+    "activate": [
+      "activate project management mode",
+      "activate orchestra mode",
+      "start orchestra",
+      "orchestra mode",
+      "project management mode"
+    ],
+    "newProject": [
+      "new project",
+      "start new project",
+      "create project",
+      "begin project"
+    ],
+    "continueProject": [
+      "continue project",
+      "existing project",
+      "resume project",
+      "open project"
+    ],
+    "status": [
+      "orchestra status",
+      "desktop status",
+      "system status",
+      "are you online"
+    ],
+    "deactivate": [
+      "deactivate orchestra",
+      "exit orchestra mode",
+      "stop orchestra",
+      "leave project management"
+    ]
+  },
+  "tools": {
+    "cursor": {
+      "id": "cursor",
+      "name": "Cursor",
+      "role": "coordinator",
+      "description": "Central desktop coordinator — opens projects, assigns subtasks, runs commands, reports progress",
+      "capabilities": [
+        "project_coordination",
+        "file_management",
+        "terminal",
+        "git",
+        "task_delegation",
+        "progress_reporting"
+      ],
+      "platforms": ["desktop"],
+      "priority": 100
+    },
+    "claude_desktop": {
+      "id": "claude_desktop",
+      "name": "Claude Desktop",
+      "role": "specialist",
+      "description": "Frontend, UI/UX, avatar design, lip-sync, creative writing, architecture planning",
+      "capabilities": [
+        "frontend",
+        "ui_ux",
+        "react",
+        "react_native",
+        "avatar",
+        "lip_sync",
+        "creative",
+        "architecture",
+        "documentation"
+      ],
+      "routingKeywords": [
+        "frontend", "ui", "ux", "design", "avatar", "lip-sync", "lip sync",
+        "interface", "component", "screen", "layout", "style", "css",
+        "react", "react native", "mobile ui", "animation", "creative",
+        "copy", "content", "architecture", "plan",
+        "teaching", "lesson", "education", "learn", "student", "app"
+      ],
+      "platforms": ["desktop"],
+      "priority": 80
+    },
+    "codex": {
+      "id": "codex",
+      "name": "Codex / GPT",
+      "role": "specialist",
+      "description": "Backend, Firebase, business logic, APIs, testing, database, DevOps",
+      "capabilities": [
+        "backend",
+        "firebase",
+        "api",
+        "database",
+        "testing",
+        "logic",
+        "devops",
+        "security",
+        "typescript",
+        "node"
+      ],
+      "routingKeywords": [
+        "backend", "api", "firebase", "firestore", "database", "auth",
+        "logic", "server", "function", "test", "testing", "unit test",
+        "integration", "deploy", "ci", "cd", "security", "node",
+        "typescript", "graphql", "rest", "webhook", "cloud", "app"
+      ],
+      "platforms": ["desktop"],
+      "priority": 80
+    },
+    "elevenlabs": {
+      "id": "elevenlabs",
+      "name": "ElevenLabs",
+      "role": "specialist",
+      "description": "Voice synthesis, TTS, multi-language voices, voice cloning",
+      "capabilities": [
+        "tts",
+        "voice_synthesis",
+        "voice_cloning",
+        "multilingual",
+        "audio"
+      ],
+      "routingKeywords": [
+        "voice", "voices", "tts", "speech", "audio", "elevenlabs",
+        "narration", "speak", "spanish voice", "english voice",
+        "native speaker", "accent", "sound"
+      ],
+      "platforms": ["desktop"],
+      "priority": 70
+    },
+    "terminal": {
+      "id": "terminal",
+      "name": "Terminal / PowerShell",
+      "role": "executor",
+      "description": "Shell commands, npm, git, build scripts, package management",
+      "capabilities": [
+        "shell",
+        "npm",
+        "git",
+        "build",
+        "install",
+        "run_scripts"
+      ],
+      "routingKeywords": [
+        "install", "build", "run", "npm", "git", "commit", "push",
+        "deploy", "script", "terminal", "command", "package"
+      ],
+      "platforms": ["desktop"],
+      "priority": 60
+    },
+    "github": {
+      "id": "github",
+      "name": "GitHub",
+      "role": "executor",
+      "description": "Repository management, PRs, issues, branches",
+      "capabilities": [
+        "repository",
+        "pull_request",
+        "issues",
+        "branches",
+        "code_review"
+      ],
+      "routingKeywords": [
+        "github", "repository", "repo", "pull request", "pr", "issue",
+        "branch", "merge", "fork", "clone"
+      ],
+      "platforms": ["desktop", "cloud"],
+      "priority": 50
+    },
+    "firebase": {
+      "id": "firebase",
+      "name": "Firebase",
+      "role": "infrastructure",
+      "description": "Realtime sync, Firestore, Auth, Cloud Functions, Hosting",
+      "capabilities": [
+        "firestore",
+        "realtime_database",
+        "auth",
+        "cloud_functions",
+        "hosting",
+        "storage"
+      ],
+      "routingKeywords": [
+        "firebase", "firestore", "sync", "realtime", "cloud function",
+        "hosting", "authentication", "storage"
+      ],
+      "platforms": ["desktop", "mobile", "cloud"],
+      "priority": 50
+    },
+    "chrome": {
+      "id": "chrome",
+      "name": "Chrome Browser",
+      "role": "executor",
+      "description": "Web research, documentation lookup, testing web apps",
+      "capabilities": [
+        "web_browsing",
+        "research",
+        "documentation",
+        "web_testing"
+      ],
+      "routingKeywords": [
+        "browse", "research", "documentation", "docs", "web", "url",
+        "chrome", "lookup", "reference"
+      ],
+      "platforms": ["desktop"],
+      "priority": 40
+    }
+  },
+  "routingRules": {
+    "strategy": "keyword_score_with_fallback",
+    "description": "Unbiased routing: score each tool by keyword matches in the request. Highest score wins. Ties go to lower priority number (higher importance). Cursor always coordinates regardless of routing.",
+    "minScoreToAssign": 1,
+    "defaultTools": ["cursor"],
+    "alwaysInclude": ["cursor"],
+    "taskTypeDefaults": {
+      "new_app": ["cursor", "claude_desktop", "codex"],
+      "feature": ["cursor", "codex"],
+      "ui_work": ["cursor", "claude_desktop"],
+      "backend_work": ["cursor", "codex"],
+      "voice_work": ["cursor", "elevenlabs"],
+      "full_stack": ["cursor", "claude_desktop", "codex", "elevenlabs"]
+    }
+  },
+  "firebase": {
+    "collectionPrefix": "orchestra",
+    "paths": {
+      "desktopStatus": "orchestra_desktops",
+      "commands": "orchestra_commands",
+      "responses": "orchestra_responses",
+      "projects": "orchestra_projects",
+      "tasks": "orchestra_tasks",
+      "sessions": "orchestra_sessions"
+    },
+    "heartbeatIntervalMs": 15000,
+    "offlineThresholdMs": 45000
+  },
+  "conversation": {
+    "activationGreeting": "Orchestra mode activated. Checking desktop systems...",
+    "allOnline": "All systems online and ready.",
+    "partialOnline": "Some systems are offline — running in limited mode.",
+    "desktopOffline": "Desktop is offline — limited mode only. I can save your request and sync when desktop comes online.",
+    "askProjectChoice": "Do you want to continue with an existing project or start a new one?",
+    "newProjectPrompt": "Describe your new project. I'll analyze it and delegate to the best tools.",
+    "deactivated": "Orchestra mode deactivated. Back to normal George."
+  }
+}

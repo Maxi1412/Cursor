@@ -1,0 +1,70 @@
+name: George Orchestra Tests
+
+on:
+  push:
+    branches: [main, 'cursor/**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+      - run: bash scripts/check-deps.sh
+      - run: npm test
+      - run: npm run typecheck
+      - run: npm run orchestra:health
+      - run: npm run george:prepare
+
+  # Runs when GEORGE_REPO_URL secret is set (private George repo)
+  build-apk:
+    runs-on: ubuntu-latest
+    needs: backend-tests
+    if: ${{ vars.GEORGE_REPO_URL != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Clone George
+        env:
+          GEORGE_REPO_URL: ${{ vars.GEORGE_REPO_URL }}
+          GEORGE_REPO_TOKEN: ${{ secrets.GEORGE_REPO_TOKEN }}
+        run: |
+          git clone "https://x-access-token:${GEORGE_REPO_TOKEN}@${GEORGE_REPO_URL#https://}" george-app
+
+      - name: Integrate orchestra
+        run: |
+          npm ci
+          node scripts/prepare-george-orchestra.mjs george-staging
+          cp -r george-staging/* george-app/orchestra/
+          node scripts/patch-george-speech.mjs george-app george-orchestra.config.json
+
+      - name: Build release APK
+        working-directory: george-app/android
+        run: ./gradlew assembleRelease
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: george-orchestra-apk
+          path: george-app/android/app/build/outputs/apk/release/*.apk
