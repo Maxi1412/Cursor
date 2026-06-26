@@ -1,0 +1,23 @@
+{
+  "name": "george-orchestra-coordinator",
+  "version": "1.0.0",
+  "description": "Desktop coordinator for George Orchestra / Project Management mode",
+  "type": "module",
+  "scripts": {
+    "orchestra:start": "tsx orchestra/desktop/index.ts",
+    "orchestra:health": "tsx orchestra/desktop/health-cli.ts",
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
