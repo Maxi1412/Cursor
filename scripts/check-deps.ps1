@@ -52,15 +52,13 @@ if (Test-Path $GeorgePath) {
 Test-Dep "Java" (Get-Command java -ErrorAction SilentlyContinue) "Install JDK 17+"
 Test-Dep "ANDROID_HOME" ($env:ANDROID_HOME -and (Test-Path $env:ANDROID_HOME)) "Set ANDROID_HOME to Android SDK path"
 
-# Google Drive
+# Verify K: Google Drive (maxscheurer85@gmail.com)
 $driveFound = $false
-@("$env:USERPROFILE\Google Drive", "G:\My Drive", "G:\") | ForEach-Object {
-    if (Test-Path $_) {
-        $target = Join-Path $_ "Application Projects\personal calendar"
-        if (Test-Path (Split-Path $target -Parent)) { $driveFound = $true }
-    }
+if (Test-Path "K:\") {
+    $target = "K:\Application Projects\personal calendar"
+    if (Test-Path (Split-Path $target -Parent)) { $driveFound = $true }
 }
-Test-Dep "Google Drive path" $driveFound "Install Google Drive Desktop and sync 'Application Projects' folder"
+Test-Dep "K: Google Drive (maxscheurer85@gmail.com)" $driveFound "Ensure Google Drive Desktop maps maxscheurer85@gmail.com to K:"
 
 # Firebase CLI (optional)
 if (Get-Command firebase -ErrorAction SilentlyContinue) {

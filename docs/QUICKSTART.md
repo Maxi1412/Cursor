@@ -19,7 +19,7 @@ Or double-click `DEPLOY-GEORGE.bat` in the Cursor repo folder.
 3. Runs 22 backend tests
 4. Verifies Firebase config
 5. Builds release APK
-6. Copies APK to `Personal_caledar\builds\`, `G:\Application Projects\personal calendar\`, and NAS if detected
+6. Copies APK to `Personal_caledar\builds\`, `K:\Application Projects\personal calendar\` (Google Drive maxscheurer85@gmail.com), and NAS if detected
 7. Saves `George-orchestra-latest.apk` in each location
 
 ## Desktop (every session)

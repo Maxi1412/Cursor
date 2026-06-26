@@ -82,11 +82,11 @@ Get-ChildItem $localBuildDir -File | Where-Object {
     Remove-Item $_.FullName -Force
 }
 
-# Deploy to G: drive — delete v2.18.0, copy v2.19.0
-Write-Host "`n[4/5] Replacing APK on G: Google Drive..." -ForegroundColor Yellow
-& (Join-Path $CursorPath "scripts\replace-gdrive-apk.ps1") -SourceApk $localApk -ConfigPath $configPath
+# Deploy to K: Google Drive (primary) + other detected paths
+Write-Host "`n[4/5] Replacing APK on K: Google Drive..." -ForegroundColor Yellow
+& (Join-Path $CursorPath "scripts\replace-kdrive-apk.ps1") -SourceApk $localApk -ConfigPath $configPath
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "G: drive deploy failed — trying alternate paths..." -ForegroundColor Yellow
+    Write-Host "K: deploy failed — trying alternate paths..." -ForegroundColor Yellow
     $storagePaths = & (Join-Path $PSScriptRoot "detect-storage-paths.ps1")
     foreach ($target in $storagePaths) {
         if ($target.Path -eq $config.deploy.googleDrive.fullPath) { continue }
@@ -118,5 +118,5 @@ $logPath = Join-Path $localBuildDir "deploy-v$version-$timestamp.json"
 
 Write-Host "`n=== DEPLOY COMPLETE v$version ===" -ForegroundColor Green
 Write-Host "  Local:  $localApk"
-Write-Host "  G:     $($config.deploy.googleDrive.fullPath)\$apkName"
+Write-Host "  K:     $($config.deploy.googleDrive.fullPath)\$apkName"
 Write-Host "  Log:   $logPath"

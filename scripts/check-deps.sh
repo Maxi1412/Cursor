@@ -46,7 +46,7 @@ echo "=== George APK Build Dependencies (Windows only) ==="
 echo "  These are checked by check-deps.ps1 on your PC:"
 echo "  - Java JDK 17+, Android SDK, ANDROID_HOME"
 echo "  - George project at Personal_caledar/"
-echo "  - Google Drive Desktop (for G: drive deploy)"
+echo "  - K: Google Drive (maxscheurer85@gmail.com) Application Projects/personal calendar/"
 
 if [ "$ERRORS" -gt 0 ]; then
   echo ""

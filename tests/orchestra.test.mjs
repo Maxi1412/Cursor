@@ -162,7 +162,8 @@ describe('George integration artifacts', () => {
     assert.equal(config.app.version, '2.19.0');
     assert.equal(config.app.previousVersion, '2.18.0');
     assert.equal(config.deploy.apkFileName, 'Personal_Calendar_v2.19.0.apk');
-    assert.equal(config.deploy.googleDrive.fullPath, 'G:\\Application Projects\\personal calendar');
+    assert.equal(config.deploy.googleDrive.fullPath, 'K:\\Application Projects\\personal calendar');
+    assert.equal(config.deploy.googleDrive.driveLetter, 'K:');
   });
 });
 

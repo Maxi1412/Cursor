@@ -18,10 +18,10 @@
     "apkFileName": "Personal_Calendar_v2.19.0.apk",
     "googleDrive": {
       "enabled": true,
-      "account": "SCHEUERER85@gmail.com",
-      "driveLetter": "G:",
+      "account": "maxscheurer85@gmail.com",
+      "driveLetter": "K:",
       "folderPath": "Application Projects\\personal calendar",
-      "fullPath": "G:\\Application Projects\\personal calendar"
+      "fullPath": "K:\\Application Projects\\personal calendar"
     },
     "deletePreviousPatterns": [
       "*2.18.0*",
@@ -30,7 +30,7 @@
     ],
     "synology": {
       "enabled": true,
-      "searchPatterns": ["\\\\synology", "\\\\NAS", "Z:\\", "Y:\\", "K:\\"]
+      "searchPatterns": ["\\\\synology", "\\\\NAS", "Z:\\", "Y:\\", "M:\\", "T:\\"]
     },
     "extraPaths": []
   },

@@ -1,7 +1,6 @@
-# Detect Google Drive on G: (and K: if mapped), Synology NAS, mapped drives
+# Detect K: Google Drive (maxscheurer85@gmail.com), G: and other mapped drives
 param(
-    [string]$GoogleFolder = "Application Projects\personal calendar",
-    [string]$Account = "SCHEUERER85@gmail.com"
+    [string]$Account = "maxscheurer85@gmail.com"
 )
 
 $paths = @()
@@ -18,48 +17,54 @@ function Ensure-Folder($path) {
     }
 }
 
-# PRIMARY: G:\Application Projects\personal calendar (user's exact path)
-$primaryG = "G:\Application Projects\personal calendar"
-if (Test-Path "G:\") {
-    Ensure-Folder (Split-Path $primaryG -Parent)
-    Ensure-Folder $primaryG
-    Add-DeployPath "G-Drive-Primary" $primaryG "G:\"
-}
-
-# K: drive (user mentioned "K for Kilo" — may be alternate Google Drive letter)
+# PRIMARY: K: = Google Drive for maxscheurer85@gmail.com (per user screenshot)
+$primaryK = "K:\Application Projects\personal calendar"
 if (Test-Path "K:\") {
-    $kTarget = "K:\Application Projects\personal calendar"
-    Ensure-Folder (Split-Path $kTarget -Parent)
-    Ensure-Folder $kTarget
-    Add-DeployPath "K-Drive" $kTarget "K:\"
+    Ensure-Folder (Split-Path $primaryK -Parent)
+    Ensure-Folder $primaryK
+    Add-DeployPath "K-Drive-GoogleDrive" $primaryK "K: ($Account)"
 }
 
-# Synology / mapped network drives
+# Secondary: other Google Drive letters (G:, H:, J: from screenshot)
+@("G", "H", "J") | ForEach-Object {
+    $letter = "${_}:\"
+    if (Test-Path $letter) {
+        $target = Join-Path $letter "Application Projects\personal calendar"
+        Ensure-Folder (Split-Path $target -Parent)
+        Ensure-Folder $target
+        Add-DeployPath "${_}-Drive" $target $letter
+    }
+}
+
+# User profile Google Drive paths
+@(
+    "$env:USERPROFILE\Google Drive\My Drive",
+    "$env:USERPROFILE\Google Drive"
+) | ForEach-Object {
+    if (Test-Path $_) {
+        $target = Join-Path $_ "Application Projects\personal calendar"
+        Ensure-Folder (Split-Path $target -Parent)
+        Ensure-Folder $target
+        Add-DeployPath "GoogleDrive-Profile" $target $_
+    }
+}
+
+# Synology / NAS mapped drives
 Get-PSDrive -PSProvider FileSystem -ErrorAction SilentlyContinue | ForEach-Object {
     $root = $_.Root
-    if ($root -match '^[A-Z]:\\$' -and $root -ne 'G:\') {
+    if ($root -match '^[A-Z]:\\$' -and $root -notin @('K:\', 'C:\')) {
         $display = (Get-PSDrive $_.Name -ErrorAction SilentlyContinue).DisplayRoot
-        if ($display -match 'synology|\\\\|NAS') {
+        if ($display -match 'synology|\\\\|192\.168') {
             $nasTarget = Join-Path $root "Application Projects\personal calendar"
             Ensure-Folder (Split-Path $nasTarget -Parent)
             Ensure-Folder $nasTarget
-            Add-DeployPath "Synology/NAS" $nasTarget $display
+            Add-DeployPath "NAS" $nasTarget $display
         }
     }
 }
 
-# UNC paths
-@("\\synology", "\\NAS", "\\DISKSTATION") | ForEach-Object {
-    if (Test-Path $_ -ErrorAction SilentlyContinue) {
-        $nasTarget = Join-Path $_ "Application Projects\personal calendar"
-        Ensure-Folder (Split-Path $nasTarget -Parent)
-        Ensure-Folder $nasTarget
-        Add-DeployPath "UNC/NAS" $nasTarget $_
-    }
-}
-
 if ($paths.Count -eq 0) {
-    Write-Host "WARNING: No Google Drive or NAS paths detected. APK will only save locally." -ForegroundColor Yellow
+    Write-Host "WARNING: No K: or Google Drive paths detected." -ForegroundColor Yellow
 }
 
 return $paths
