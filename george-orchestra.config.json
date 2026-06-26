@@ -1,0 +1,41 @@
+{
+  "georgeProjectPath": "C:\\Users\\acer\\Documents\\Claude\\Projects\\Personal_caledar",
+  "cursorRepoPath": "C:\\Users\\acer\\Documents\\Claude\\Projects\\Cursor",
+  "desktopId": "any",
+  "firebase": {
+    "projectId": "",
+    "serviceAccountPath": ""
+  },
+  "deploy": {
+    "localBuildDir": "builds",
+    "googleDrive": {
+      "enabled": true,
+      "account": "SCHEUERER85@gmail.com",
+      "folderPath": "Application Projects\\personal calendar"
+    },
+    "synology": {
+      "enabled": true,
+      "searchPatterns": ["\\\\synology", "\\\\NAS", "Z:\\", "Y:\\"]
+    },
+    "extraPaths": []
+  },
+  "speechHandlerPatterns": [
+    "onSpeechResults",
+    "onSpeechResult",
+    "handleVoiceCommand",
+    "processVoiceInput",
+    "handleSpeech",
+    "onTranscript",
+    "handleUserMessage",
+    "processUserInput"
+  ],
+  "speechHandlerFiles": [
+    "src/services/VoiceService.ts",
+    "src/services/SpeechService.ts",
+    "src/hooks/useVoice.ts",
+    "src/hooks/useSpeech.ts",
+    "src/GeorgeAI.ts",
+    "src/services/GeorgeService.ts",
+    "App.tsx"
+  ]
+}

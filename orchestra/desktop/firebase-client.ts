@@ -9,6 +9,7 @@ import {
   taskDocPath,
   sessionDocPath,
   generateId,
+  FIREBASE_PATHS,
 } from '../shared/firebase-paths.js';
 import type {
   OrchestraCommand,
@@ -116,7 +117,7 @@ export function listenForCommands(
 ): () => void {
   const firestore = getDb();
   const unsubscribe = firestore
-    .collection('orchestra/commands')
+    .collection(FIREBASE_PATHS.commands)
     .where('status', '==', 'pending')
     .onSnapshot(async (snapshot) => {
       for (const change of snapshot.docChanges()) {

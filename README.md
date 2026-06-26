@@ -1,78 +1,64 @@
 # George Orchestra Coordinator
 
-Desktop coordinator for **George** — your React Native personal assistant. This repo lets George (on your phone) conduct your full desktop setup (Cursor, Claude Desktop, Codex/GPT, ElevenLabs, terminal, GitHub, Firebase) to build apps and features via voice.
+Desktop coordinator for **George** — voice-controlled project management from your phone.
 
-## What this repo is
+## Fastest path (Windows)
 
-- **Desktop coordinator** — runs on your Windows/Mac machine, listens for commands via Firebase
-- **Shared config & routing** — tool list, trigger phrases, unbiased delegation logic
-- **George mobile module** — drop-in `orchestra/mobile/` code to copy into your George app
-
-George itself lives in your `Personal_calendar` project. This repo does **not** modify George — integration is modular.
-
-## Quick start (desktop)
-
-```bash
-cp .env.example .env
-# Edit .env: FIREBASE_PROJECT_ID, GOOGLE_APPLICATION_CREDENTIALS, ORCHESTRA_WORKSPACE_ROOT
-
+```powershell
+cd C:\Users\acer\Documents\Claude\Projects\Cursor
 npm install
-npm run orchestra:health    # check tools without Firebase
-npm run orchestra:start     # start coordinator daemon
+npm run george:setup          # integrate into Personal_caledar automatically
+npm run orchestra:start       # start desktop coordinator
+npm run george:build-deploy   # build APK → local + Google Drive + NAS
 ```
 
-Set workspace root to your projects folder, e.g.:
-`C:\Users\acer\Documents\Claude\Projects`
+See **[docs/QUICKSTART.md](docs/QUICKSTART.md)** for the shortest test sequence.
 
-## George integration
+## What `george:setup` does automatically
 
-See [docs/GEORGE_INTEGRATION.md](docs/GEORGE_INTEGRATION.md) for wiring OrchestraMode into George's speech handler.
+1. Copies `orchestra/` into `C:\Users\acer\Documents\Claude\Projects\Personal_caledar\orchestra\`
+2. Patches George speech handler + `App.tsx` (or creates `MANUAL_HOOK.ts`)
+3. Merges Firestore rules for `orchestra_*` collections
+4. Verifies Firebase project ID matches `google-services.json`
 
-## Testing
+## George project path
 
-See [docs/TESTING.md](docs/TESTING.md) for step-by-step test instructions.
+`C:\Users\acer\Documents\Claude\Projects\Personal_caledar`
 
-## Voice examples
+Edit `george-orchestra.config.json` if your path differs.
 
-> "Activate Project Management mode"
+## Google Drive deploy
 
-> "New project: English teaching app with native English and Spanish voices"
+APK + orchestra bundle auto-copied to:
+`Google Drive\Application Projects\personal calendar\`
 
-George checks desktop status, routes to Claude (UI), Codex (backend), ElevenLabs (voices), and Cursor coordinates on desktop.
+Also copies to Synology/NAS if mapped drives are detected.
 
-## Project structure
+## Docs
 
-```
-orchestra/
-  shared/           # Config, triggers, routing, Firebase paths, types
-  desktop/          # Coordinator daemon, health checks, tool delegates
-  mobile/           # Drop-in George integration (copy to George app)
-docs/
-  GEORGE_INTEGRATION.md
-  TESTING.md
-```
+- [QUICKSTART.md](docs/QUICKSTART.md) — minimal commands + test sequence
+- [GEORGE_INTEGRATION.md](docs/GEORGE_INTEGRATION.md) — architecture details
+- [TESTING.md](docs/TESTING.md) — full test plan
 
 ## Environment variables
 
 | Variable | Description |
 |----------|-------------|
 | `FIREBASE_PROJECT_ID` | Firebase project ID |
-| `GOOGLE_APPLICATION_CREDENTIALS` | Path to service account JSON |
-| `ORCHESTRA_DESKTOP_ID` | Desktop identifier (default: `desktop_<hostname>`) |
-| `ORCHESTRA_WORKSPACE_ROOT` | Where new projects are created |
-| `OPENAI_API_KEY` | Optional — Codex health check |
-| `ELEVENLABS_API_KEY` | Optional — ElevenLabs health check |
+| `GOOGLE_APPLICATION_CREDENTIALS` | Service account JSON path |
+| `ORCHESTRA_DESKTOP_ID` | Desktop ID (default: `desktop_<hostname>`) |
+| `ORCHESTRA_WORKSPACE_ROOT` | New project folder root |
 
 ## Firebase collections
 
-| Path | Purpose |
-|------|---------|
-| `orchestra/desktops/{id}` | Desktop heartbeat & tool status |
-| `orchestra/commands/{id}` | Commands from George (phone) |
-| `orchestra/responses/{id}` | Responses to George |
-| `orchestra/projects/{id}` | Project metadata |
-| `orchestra/tasks/{id}` | Delegated subtasks |
-| `orchestra/sessions/{id}` | Orchestra session state |
+| Collection | Purpose |
+|------------|---------|
+| `orchestra_desktops` | Desktop heartbeat |
+| `orchestra_commands` | Phone → desktop |
+| `orchestra_responses` | Desktop → phone |
+| `orchestra_projects` | Project metadata |
+| `orchestra_tasks` | Delegated subtasks |
+| `orchestra_sessions` | Session state |
 
 ## License
 

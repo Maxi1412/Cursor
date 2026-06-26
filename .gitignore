@@ -4,3 +4,4 @@ dist/
 *.log
 serviceAccountKey.json
 firebase-debug.log
+.george-orchestra-staging/

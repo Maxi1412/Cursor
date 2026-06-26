@@ -219,12 +219,12 @@
   "firebase": {
     "collectionPrefix": "orchestra",
     "paths": {
-      "desktopStatus": "orchestra/desktops",
-      "commands": "orchestra/commands",
-      "responses": "orchestra/responses",
-      "projects": "orchestra/projects",
-      "tasks": "orchestra/tasks",
-      "sessions": "orchestra/sessions"
+      "desktopStatus": "orchestra_desktops",
+      "commands": "orchestra_commands",
+      "responses": "orchestra_responses",
+      "projects": "orchestra_projects",
+      "tasks": "orchestra_tasks",
+      "sessions": "orchestra_sessions"
     },
     "heartbeatIntervalMs": 15000,
     "offlineThresholdMs": 45000

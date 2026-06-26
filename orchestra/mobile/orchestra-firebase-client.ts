@@ -19,6 +19,7 @@ import {
   generateId,
   isDesktopOnline,
   OFFLINE_THRESHOLD_MS,
+  FIREBASE_PATHS,
 } from '../shared/firebase-paths.js';
 
 /** Minimal Firestore interface — compatible with @react-native-firebase/firestore or firebase JS SDK */
@@ -114,7 +115,7 @@ export class OrchestraFirebaseClient {
   async getDesktopStatus(desktopId?: string): Promise<DesktopStatus | null> {
     const id = desktopId ?? this.desktopId;
     if (id === 'any') {
-      const snapshot = await this.firestore.collection('orchestra/desktops').get();
+      const snapshot = await this.firestore.collection(FIREBASE_PATHS.desktopStatus).get();
       if (snapshot.empty) return null;
 
       let best: DesktopStatus | null = null;
@@ -191,7 +192,7 @@ export class OrchestraFirebaseClient {
 
     const poll = async () => {
       const snapshot = await this.firestore
-        .collection('orchestra/tasks')
+        .collection(FIREBASE_PATHS.tasks)
         .where('projectId', '==', projectId)
         .get();
 

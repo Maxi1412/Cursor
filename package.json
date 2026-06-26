@@ -6,6 +6,12 @@
   "scripts": {
     "orchestra:start": "tsx orchestra/desktop/index.ts",
     "orchestra:health": "tsx orchestra/desktop/health-cli.ts",
+    "orchestra:test-firebase": "node scripts/test-firebase-e2e.mjs",
+    "george:prepare": "node scripts/prepare-george-orchestra.mjs",
+    "george:integrate": "powershell -ExecutionPolicy Bypass -File scripts/integrate-george.ps1",
+    "george:setup": "powershell -ExecutionPolicy Bypass -File scripts/one-click-setup.ps1",
+    "george:verify": "powershell -ExecutionPolicy Bypass -File scripts/verify-firebase.ps1",
+    "george:build-deploy": "powershell -ExecutionPolicy Bypass -File scripts/build-deploy-george.ps1",
     "build": "tsc --noEmit",
     "typecheck": "tsc --noEmit"
   },

@@ -1,6 +1,18 @@
 # George Orchestra Mode — Integration Guide
 
-This guide explains how to add Orchestra / Project Management mode to your George React Native app **without changing any existing features**.
+## Automated integration (recommended)
+
+On Windows, from this Cursor repo:
+
+```powershell
+npm run george:setup
+```
+
+This copies orchestra into `Personal_caledar`, patches the speech handler, merges Firestore rules, and verifies Firebase — no manual file copying.
+
+Manual steps below are only needed if you prefer full control.
+
+---
 
 ## Architecture
 
