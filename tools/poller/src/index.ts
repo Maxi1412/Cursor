@@ -80,7 +80,6 @@ async function main(): Promise<void> {
   console.log(
     `[poller] worker=${cfg.worker} mode=${cfg.mock ? 'mock' : 'real'} → ${cfg.orchestratorUrl} every ${cfg.intervalMs}ms`,
   );
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     try {
       await processOnce(cfg);

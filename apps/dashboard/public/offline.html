@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediaDeck — Offline</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: radial-gradient(120% 55% at 50% 8%, #16283a 0%, rgba(20, 32, 46, 0) 55%), #0b0e13;
+        color: #eaeff6;
+        font-family: 'Inter', -apple-system, system-ui, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+      .wrap {
+        padding: 30px;
+        max-width: 320px;
+      }
+      .dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        margin: 0 auto 18px;
+        background: #ffb443;
+        box-shadow: 0 0 0 5px rgba(255, 180, 67, 0.16), 0 0 20px 3px rgba(255, 180, 67, 0.55);
+      }
+      h1 {
+        font-size: 20px;
+        letter-spacing: 0.14em;
+        font-weight: 800;
+      }
+      h1 b {
+        color: #ffb443;
+      }
+      p {
+        color: #7b879b;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="dot"></div>
+      <h1>MEDIA<b>DECK</b></h1>
+      <p>You're offline. MediaDeck will reconnect to the orchestrator as soon as your network is back.</p>
+    </div>
+  </body>
+</html>
