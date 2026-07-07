@@ -17,22 +17,27 @@ export const ACK_COLLECTIONS = {
 
 const T0 = 1_700_000_000_000; // fixed epoch base so seeds are deterministic (no Date.now)
 
-/** A compact demo library mirroring the prototype's mock data. */
+/**
+ * A compact demo library that mirrors the scanner's sample media tree EXACTLY — same
+ * slug ids the scanner produces (`slug(title)`) — so a real scan cleanly overwrites these
+ * seeds instead of duplicating them. Populates the UI before the first scan; after a scan
+ * the scanner is authoritative.
+ */
 const INVENTORY: InventoryItem[] = [
-  { id: 'simpsons', mode: 'tv', cat: 'Animated', type: 'series', title: 'The Simpsons', path: 'T:\\TV Shows\\Animated\\The Simpsons', quality: '1080p', seasonsOnDisk: [36], missingCount: 0, subTH: true, lastScanned: T0 },
+  { id: 'the-simpsons', mode: 'tv', cat: 'Animated', type: 'series', title: 'The Simpsons', path: 'T:\\TV Shows\\Animated\\The Simpsons', quality: '1080p', seasonsOnDisk: [36], missingCount: 0, subTH: true, lastScanned: T0 },
   { id: 'severance', mode: 'tv', cat: 'Sci-Fi', type: 'series', title: 'Severance', path: 'T:\\TV Shows\\Sci-Fi\\Severance', quality: '2160p', seasonsOnDisk: [2], missingCount: 0, subTH: false, lastScanned: T0 },
-  { id: 'onepiece', mode: 'tv', cat: 'Animated', type: 'series', title: 'One Piece', path: 'T:\\TV Shows\\Animated\\One Piece', quality: '1080p', seasonsOnDisk: [21], missingCount: 12, subTH: true, lastScanned: T0 },
-  { id: 'theboys', mode: 'tv', cat: 'Comics', type: 'series', title: 'The Boys', path: 'T:\\TV Shows\\Comics\\The Boys', quality: '2160p', seasonsOnDisk: [3, 4], missingCount: 3, subTH: false, lastScanned: T0 },
-  { id: 'hotd', mode: 'tv', cat: 'Fantasy', type: 'series', title: 'House of the Dragon', path: 'T:\\TV Shows\\Fantasy\\House of the Dragon', quality: '2160p', seasonsOnDisk: [2], missingCount: 0, subTH: false, lastScanned: T0 },
-  { id: 'dune2', mode: 'movies', cat: 'Sci-fi Movies', type: 'movie', title: 'Dune: Part Two', year: 2024, path: 'M:\\Movies\\Sci-fi Movies\\Dune Part Two', quality: '2160p', seasonsOnDisk: [], missingCount: 0, subTH: true, lastScanned: T0 },
-  { id: 'deadpool', mode: 'movies', cat: 'Marvel Movies', type: 'movie', title: 'Deadpool & Wolverine', year: 2024, path: 'M:\\Movies\\Marvel Movies\\Deadpool & Wolverine', quality: '1080p', seasonsOnDisk: [], missingCount: 0, subTH: false, lastScanned: T0 },
-  { id: 'rocky', mode: 'movies', cat: 'Action', type: 'movie', title: 'Rocky', year: 1976, path: 'M:\\Movies\\Action\\Rocky', quality: '720p', seasonsOnDisk: [], missingCount: 0, subTH: true, lastScanned: T0 },
+  { id: 'one-piece', mode: 'tv', cat: 'Animated', type: 'series', title: 'One Piece', path: 'T:\\TV Shows\\Animated\\One Piece', quality: '1080p', seasonsOnDisk: [21], missingCount: 12, subTH: true, lastScanned: T0 },
+  { id: 'the-boys', mode: 'tv', cat: 'Comics', type: 'series', title: 'The Boys', path: 'T:\\TV Shows\\Comics\\The Boys', quality: '2160p', seasonsOnDisk: [4], missingCount: 3, subTH: false, lastScanned: T0 },
+  { id: 'dune-part-two', mode: 'movies', cat: 'Sci-fi Movies', type: 'movie', title: 'Dune Part Two', year: 2024, path: 'M:\\Movies\\Sci-fi Movies\\Dune Part Two (2024)', quality: '2160p', seasonsOnDisk: [], missingCount: 0, subTH: true, lastScanned: T0 },
+  { id: 'deadpool-wolverine', mode: 'movies', cat: 'Marvel Movies', type: 'movie', title: 'Deadpool & Wolverine', year: 2024, path: 'M:\\Movies\\Marvel Movies\\Deadpool & Wolverine (2024)', quality: '1080p', seasonsOnDisk: [], missingCount: 0, subTH: false, lastScanned: T0 },
+  { id: 'rocky', mode: 'movies', cat: 'Action', type: 'movie', title: 'Rocky', year: 1976, path: 'M:\\Movies\\Action\\Rocky (1976)', quality: '720p', seasonsOnDisk: [], missingCount: 0, subTH: false, lastScanned: T0 },
+  { id: 'the-dark-knight', mode: 'movies', cat: 'DC Movies', type: 'movie', title: 'The Dark Knight', year: 2008, path: 'M:\\Movies\\DC Movies\\The Dark Knight (2008)', quality: '2160p', seasonsOnDisk: [], missingCount: 0, subTH: false, lastScanned: T0 },
 ];
 
 const HEALTH: HealthFinding[] = [
-  { id: 'dup1', kind: 'dup', title: 'The Dark Knight', mode: 'movies', cat: 'DC Movies', detail: '2 copies · 1080p + 2160p', status: 'open', ts: T0 },
+  { id: 'dup:thedarkknight', kind: 'dup', title: 'The Dark Knight', mode: 'movies', cat: 'DC Movies', detail: '2 copies · 1080p + 2160p', status: 'open', mediaId: 'the-dark-knight', ts: T0 },
   { id: 'corr1', kind: 'corrupt', title: 'John Wick 4', mode: 'movies', cat: 'Action', detail: 'No audio track detected', status: 'open', ts: T0 },
-  { id: 'org1', kind: 'organize', title: 'Deadpool & Wolverine', mode: 'movies', cat: 'DC Movies', detail: 'In DC folder · looks like Marvel', status: 'open', mediaId: 'deadpool', ts: T0 },
+  { id: 'org1', kind: 'organize', title: 'Deadpool & Wolverine', mode: 'movies', cat: 'DC Movies', detail: 'In DC folder · looks like Marvel', status: 'open', mediaId: 'deadpool-wolverine', ts: T0 },
 ];
 
 const NOTIFICATIONS: Notification[] = [
