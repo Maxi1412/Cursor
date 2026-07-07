@@ -1,0 +1,123 @@
+# MediaDeck — Synology Container Manager "Project" stack.
+# Single shared /data volume (TRaSH layout) mounted at the SAME path in every media-touching
+# container so hardlinks/atomic moves work. Everything restarts unless-stopped so it survives
+# NAS reboots and the desktop being off. See docs/NAS-RUNBOOK.md.
+#
+# Ports avoid DSM reserved (5000/5001/80/443/6690/6881): Sonarr 8989, Prowlarr 9696,
+# qBittorrent 8080, ntfy 9999→80, dashboard 3000, orchestrator internal-only.
+
+name: mediadeck
+
+x-common: &common
+  restart: unless-stopped
+  environment:
+    - PUID=${PUID:-1029}
+    - PGID=${PGID:-100}
+    - TZ=${TZ:-Asia/Bangkok}
+
+networks:
+  mediadeck:
+    driver: bridge
+
+services:
+  # ───────────────────────── off-the-shelf engines ─────────────────────────
+  sonarr:
+    <<: *common
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: mediadeck-sonarr
+    networks: [mediadeck]
+    ports: ['8989:8989']
+    volumes:
+      - ${DATA_ROOT:-./data}:/data
+      - sonarr-config:/config
+
+  prowlarr:
+    <<: *common
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: mediadeck-prowlarr
+    networks: [mediadeck]
+    ports: ['9696:9696']
+    volumes:
+      - prowlarr-config:/config
+
+  qbittorrent:
+    <<: *common
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: mediadeck-qbittorrent
+    networks: [mediadeck]
+    ports: ['8080:8080']
+    environment:
+      - PUID=${PUID:-1029}
+      - PGID=${PGID:-100}
+      - TZ=${TZ:-Asia/Bangkok}
+      - WEBUI_PORT=8080
+    volumes:
+      - ${DATA_ROOT:-./data}:/data
+      - qbittorrent-config:/config
+    profiles: ['fallback'] # Download Station is default; enable with `--profile fallback`
+
+  ntfy:
+    <<: *common
+    image: binwiederhier/ntfy:latest
+    container_name: mediadeck-ntfy
+    command: serve
+    networks: [mediadeck]
+    ports: ['9999:80']
+    environment:
+      - TZ=${TZ:-Asia/Bangkok}
+      - NTFY_BASE_URL=http://localhost:9999
+    volumes:
+      - ntfy-cache:/var/cache/ntfy
+
+  # ───────────────────────── custom services ─────────────────────────
+  orchestrator:
+    <<: *common
+    build:
+      context: ..
+      dockerfile: services/orchestrator/Dockerfile
+    container_name: mediadeck-orchestrator
+    networks: [mediadeck]
+    env_file:
+      - path: .env
+        required: false
+    # no host port — reached by the dashboard over the internal network
+    volumes:
+      - ${DATA_ROOT:-./data}:/data
+      # For STORAGE_BACKEND=firestore, mount the service-account JSON read-only and set
+      # FIREBASE_SERVICE_ACCOUNT_PATH to match (see docs/NAS-RUNBOOK.md):
+      # - ./secrets/firebase-service-account.json:/run/secrets/firebase-service-account.json:ro
+    depends_on: [sonarr, ntfy]
+
+  scanner:
+    <<: *common
+    build:
+      context: ..
+      dockerfile: services/scanner/Dockerfile
+    container_name: mediadeck-scanner
+    networks: [mediadeck]
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - ORCH_PUBLIC_URL=http://orchestrator:4000
+    volumes:
+      - ${DATA_ROOT:-./data}:/data:ro
+    depends_on: [orchestrator]
+
+  dashboard:
+    <<: *common
+    build:
+      context: ..
+      dockerfile: apps/dashboard/Dockerfile
+      args:
+        - VITE_ORCH_URL=${VITE_ORCH_URL:-}
+    container_name: mediadeck-dashboard
+    networks: [mediadeck]
+    ports: ['3000:80']
+    depends_on: [orchestrator]
+
+volumes:
+  sonarr-config:
+  prowlarr-config:
+  qbittorrent-config:
+  ntfy-cache:
