@@ -1,0 +1,38 @@
+# Local container-parity override:  docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.dev.yml up
+# Runs the custom services from source with hot reload, SQLite, all adapters mocked, and the
+# orchestrator exposed on the host. For the fastest local loop, prefer `pnpm dev` (no Docker).
+services:
+  orchestrator:
+    build: !reset null
+    image: node:22-bookworm-slim
+    working_dir: /app
+    command: sh -c "corepack enable && pnpm install --frozen-lockfile && pnpm --filter @mediadeck/orchestrator dev"
+    environment:
+      - STORAGE_BACKEND=sqlite
+      - SQLITE_PATH=/data/mediadeck/mediadeck.db
+      - SONARR_MODE=mock
+      - TMDB_MODE=mock
+      - DOWNLOADSTATION_MODE=mock
+      - NTFY_MODE=mock
+      - DECK_MODE=mock
+      - AUTH_MODE=mock
+    ports: ['4000:4000']
+    volumes:
+      - ..:/app
+      - /app/node_modules
+    depends_on: !reset []
+
+  scanner:
+    build: !reset null
+    image: node:22-bookworm-slim
+    working_dir: /app
+    command: sh -c "corepack enable && pnpm install --frozen-lockfile && pnpm --filter @mediadeck/scanner dev"
+    environment:
+      - ORCH_PUBLIC_URL=http://orchestrator:4000
+    volumes:
+      - ..:/app
+      - /app/node_modules
+    depends_on: [orchestrator]
+
+  # Off-the-shelf engines aren't needed for a mock dev run — start them explicitly with
+  # `--profile fallback` (qbittorrent) if you want them.

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "stream",
+  "globalEnv": [
+    "NODE_ENV",
+    "STORAGE_BACKEND",
+    "SONARR_MODE",
+    "PROWLARR_MODE",
+    "TMDB_MODE",
+    "DOWNLOADSTATION_MODE",
+    "QBITTORRENT_MODE",
+    "NTFY_MODE",
+    "DECK_MODE",
+    "DECK_MODEL",
+    "AUTH_MODE"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "lint": {
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}

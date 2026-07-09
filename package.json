@@ -1,0 +1,41 @@
+{
+  "name": "mediadeck",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MediaDeck — self-hosted media-library management + automation with a phone-first PWA and the Deck AI assistant.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "dev:docker": "docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.dev.yml up --build",
+    "typecheck": "turbo run typecheck",
+    "lint": "eslint .",
+    "test": "turbo run test",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\""
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^22.10.0",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.1",
+    "vitest": "^2.1.8"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "esbuild",
+      "protobufjs",
+      "@firebase/util"
+    ]
+  }
+}
