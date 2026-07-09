@@ -1,9 +1,10 @@
-import { readdirSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { readdirSync, existsSync, statSync } from 'node:fs';
+import { join, extname } from 'node:path';
 import type { InventoryItem, Mode } from '@mediadeck/types';
 
 const RES_TOKENS = ['2160p', '1440p', '1080p', '720p', '480p'];
 const RES_RANK: Record<string, number> = { '480p': 1, '720p': 2, '1080p': 3, '1440p': 4, '2160p': 5 };
+const VIDEO_EXT = new Set(['.mkv', '.mp4', '.avi', '.m4v', '.mov', '.ts']);
 
 const slug = (t: string) =>
   t
@@ -27,6 +28,33 @@ function filesRecursive(p: string): string[] {
     else out.push(e.name);
   }
   return out;
+}
+
+function videoFilesRecursive(p: string): string[] {
+  if (!existsSync(p)) return [];
+  const out: string[] = [];
+  for (const e of readdirSync(p, { withFileTypes: true })) {
+    const full = join(p, e.name);
+    if (e.isDirectory()) out.push(...videoFilesRecursive(full));
+    else if (VIDEO_EXT.has(extname(e.name).toLowerCase())) out.push(full);
+  }
+  return out;
+}
+
+/** The largest video file under a title's folder — the corruption scan probes this. */
+function mainVideoFile(dir: string): string | undefined {
+  const files = videoFilesRecursive(dir);
+  if (!files.length) return undefined;
+  let best = files[0]!;
+  let bestSize = statSync(best).size;
+  for (const f of files.slice(1)) {
+    const size = statSync(f).size;
+    if (size > bestSize) {
+      best = f;
+      bestSize = size;
+    }
+  }
+  return best;
 }
 
 /** Best quality across a title's video files, defaulting to 1080p when unknown. */
@@ -65,6 +93,7 @@ export function walkMovies(root: string, now: number): InventoryItem[] {
         title,
         year,
         path: dir,
+        mainFile: mainVideoFile(dir),
         quality: bestQuality(files),
         seasonsOnDisk: [],
         missingCount: 0,
@@ -95,6 +124,7 @@ export function walkTv(root: string, now: number): InventoryItem[] {
         type: 'series',
         title: showDir,
         path: dir,
+        mainFile: mainVideoFile(dir),
         quality: bestQuality(files),
         seasonsOnDisk: seasons,
         missingCount: 0, // filled by Sonarr resolution

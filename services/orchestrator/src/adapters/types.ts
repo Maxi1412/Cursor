@@ -1,9 +1,11 @@
 import type {
   DownloadStatus,
   Notification,
+  SonarrMissingRecord,
   SonarrRootFolder,
   SonarrSeries,
   TmdbMovie,
+  TmdbMovieDetails,
 } from '@mediadeck/types';
 
 /** Every adapter reports its effective mode and a reachability check for the System chips. */
@@ -16,6 +18,8 @@ export interface Adapter {
 export interface SonarrAdapter extends Adapter {
   listSeries(): Promise<SonarrSeries[]>;
   listRootFolders(): Promise<SonarrRootFolder[]>;
+  /** Aired-but-not-downloaded episodes — the source for Signal's "New signals" feed. */
+  listMissing(): Promise<SonarrMissingRecord[]>;
   /** Trigger a search for a series' missing (wanted) episodes. */
   searchMissing(seriesId: number): Promise<void>;
 }
@@ -26,6 +30,8 @@ export interface ProwlarrAdapter extends Adapter {
 
 export interface TmdbAdapter extends Adapter {
   searchMovie(title: string, year?: number): Promise<TmdbMovie | null>;
+  /** Full details incl. production companies — used by the organization scan. */
+  getMovieDetails(id: number): Promise<TmdbMovieDetails | null>;
   /** Build a poster URL from a TMDB poster_path (adapter owns the base + size). */
   posterUrl(posterPath: string): string;
 }

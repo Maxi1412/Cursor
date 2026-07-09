@@ -30,4 +30,11 @@ describe('@mediadeck/config', () => {
     expect(c.adapters.auth.allowlist).toEqual(['a@x.com', 'b@y.com']);
     expect(c.adapters.auth.ready).toBe(true);
   });
+
+  it('defaults subtitles to mock and activates with an OpenSubtitles key', () => {
+    expect(loadConfig({}).adapters.subtitles.mode).toBe('mock');
+    const c = loadConfig({ SUBTITLES_MODE: 'real', OPENSUBTITLES_API_KEY: 'k' });
+    expect(c.adapters.subtitles.mode).toBe('real');
+    expect(c.adapters.subtitles.ready).toBe(true);
+  });
 });

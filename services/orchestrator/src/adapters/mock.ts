@@ -1,9 +1,11 @@
 import type {
   DownloadStatus,
   Notification,
+  SonarrMissingRecord,
   SonarrRootFolder,
   SonarrSeries,
   TmdbMovie,
+  TmdbMovieDetails,
 } from '@mediadeck/types';
 import type {
   DownloadStationAdapter,
@@ -20,10 +22,25 @@ import type {
  * Station queue, and ntfy (logs instead of pushing).
  */
 
+// episodeCount = monitored & aired; episodeFileCount = actually on disk. Their gap is
+// what missingCountFor() reports — kept in sync with the seed's illustrative counts.
 const MOCK_SERIES: SonarrSeries[] = [
-  { id: 1, title: 'The Simpsons', tvdbId: 71663, year: 1989, path: 'T:\\TV Shows\\Animated\\The Simpsons', monitored: true, seriesType: 'standard', statistics: { seasonCount: 36, episodeFileCount: 760, totalEpisodeCount: 768 } },
-  { id: 2, title: 'One Piece', tvdbId: 81797, year: 1999, path: 'T:\\TV Shows\\Animated\\One Piece', monitored: true, seriesType: 'anime', statistics: { seasonCount: 21, episodeFileCount: 1088, totalEpisodeCount: 1100 } },
-  { id: 3, title: 'Severance', tvdbId: 371980, year: 2022, path: 'T:\\TV Shows\\Sci-Fi\\Severance', monitored: true, seriesType: 'standard', statistics: { seasonCount: 2, episodeFileCount: 18, totalEpisodeCount: 18 } },
+  { id: 1, title: 'The Simpsons', tvdbId: 71663, year: 1989, path: 'T:\\TV Shows\\Animated\\The Simpsons', monitored: true, seriesType: 'standard', statistics: { seasonCount: 36, episodeFileCount: 760, episodeCount: 760, totalEpisodeCount: 768 } },
+  { id: 2, title: 'One Piece', tvdbId: 81797, year: 1999, path: 'T:\\TV Shows\\Animated\\One Piece', monitored: true, seriesType: 'anime', statistics: { seasonCount: 21, episodeFileCount: 1088, episodeCount: 1100, totalEpisodeCount: 1100 } },
+  { id: 3, title: 'Severance', tvdbId: 371980, year: 2022, path: 'T:\\TV Shows\\Sci-Fi\\Severance', monitored: true, seriesType: 'standard', statistics: { seasonCount: 2, episodeFileCount: 18, episodeCount: 18, totalEpisodeCount: 18 } },
+  { id: 4, title: 'The Boys', tvdbId: 355567, year: 2019, path: 'T:\\TV Shows\\Comics\\The Boys', monitored: true, seriesType: 'standard', statistics: { seasonCount: 4, episodeFileCount: 29, episodeCount: 32, totalEpisodeCount: 32 } },
+];
+
+const MOCK_MISSING: SonarrMissingRecord[] = [
+  {
+    id: 101,
+    seriesId: 1,
+    seasonNumber: 36,
+    episodeNumber: 14,
+    airDateUtc: new Date(Date.now() - 2 * 3600_000).toISOString(),
+    title: 'S36E14',
+    series: { title: 'The Simpsons' },
+  },
 ];
 
 export class MockSonarr implements SonarrAdapter {
@@ -37,6 +54,9 @@ export class MockSonarr implements SonarrAdapter {
   }
   async listRootFolders(): Promise<SonarrRootFolder[]> {
     return [{ id: 1, path: 'T:\\TV Shows', accessible: true }];
+  }
+  async listMissing(): Promise<SonarrMissingRecord[]> {
+    return MOCK_MISSING;
   }
   async searchMissing(_seriesId: number) {
     /* mock: no-op */
@@ -64,6 +84,16 @@ export class MockTmdb implements TmdbAdapter {
     // Deterministic fake id derived from the title so repeated scans are stable.
     const id = Array.from(title).reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 1_000_000, 7);
     return { id, title, release_date: year ? `${year}-01-01` : undefined, poster_path: `/${id}.jpg`, vote_average: 7.5 };
+  }
+  async getMovieDetails(id: number): Promise<TmdbMovieDetails | null> {
+    // No real studio signal without a live key — organize.ts checks adapter.mode and
+    // skips honestly rather than trust this placeholder for real mismatch decisions.
+    return {
+      id,
+      title: 'Mock Title',
+      production_companies: [{ id: 0, name: 'Mock Studios' }],
+      genres: [],
+    };
   }
   posterUrl(posterPath: string) {
     // In real mode this is https://image.tmdb.org/t/p/w500{path}; mock serves a placeholder.

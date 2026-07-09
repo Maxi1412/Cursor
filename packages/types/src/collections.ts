@@ -17,6 +17,8 @@ export const InventoryItem = z.object({
   sonarrId: z.number().int().optional(),
   /** Absolute-ish library path, e.g. `T:\TV Shows\Animated\The Simpsons`. */
   path: z.string(),
+  /** The largest video file under `path`, when resolved by a real scan — used by the corruption scan. */
+  mainFile: z.string().optional(),
   /** Best quality present, e.g. `1080p`, `2160p`, `720p`. */
   quality: z.string().optional(),
   /** For series: which seasons are on disk. */
@@ -47,7 +49,12 @@ export const HealthFinding = z.object({
   /** Human-readable detail, e.g. "2 copies · 1080p + 2160p". */
   detail: z.string(),
   status: HealthStatus.default('open'),
+  /** dup: the item to KEEP (best quality). corrupt/organize: the affected item. */
   mediaId: z.string().optional(),
+  /** dup only: the other inventory ids in the group — these get recycled on resolve. */
+  relatedIds: z.array(z.string()).default([]),
+  /** organize only: the category the Move action relocates the item into. */
+  expectedCat: z.string().optional(),
   ts: Timestamp,
 });
 export type HealthFinding = z.infer<typeof HealthFinding>;

@@ -94,4 +94,38 @@ describe('orchestrator API', () => {
     const { body } = await json('POST', '/api/capabilities/dup/run');
     expect(body.result.key).toBe('dup');
   });
+
+  it('enriches a series against Sonarr on ingest (missingCount + sonarrId)', async () => {
+    await json('POST', '/api/inventory/bulk', {
+      items: [
+        {
+          id: 'boys-test', mode: 'tv', cat: 'Comics', type: 'series', title: 'The Boys',
+          path: 'T:\\TV Shows\\Comics\\The Boys', seasonsOnDisk: [4], missingCount: 0,
+          subTH: false, lastScanned: 0,
+        },
+      ],
+    });
+    const lib = await json('GET', '/api/library?mode=tv');
+    const boys = lib.body.items.find((i: { id: string }) => i.id === 'boys-test');
+    expect(boys.missingCount).toBe(3); // mock Sonarr: 32 aired - 29 on disk
+    expect(boys.sonarrId).toBe(4);
+  });
+
+  it('surfaces an aired-and-ready episode as a new signal (ungated, spec §3)', async () => {
+    await json('POST', '/api/inventory/bulk', {
+      items: [
+        {
+          id: 'simpsons-test', mode: 'tv', cat: 'Animated', type: 'series', title: 'The Simpsons',
+          path: 'T:\\TV Shows\\Animated\\The Simpsons', seasonsOnDisk: [36], missingCount: 0,
+          subTH: false, lastScanned: 0,
+        },
+      ],
+    });
+    // features are all off in this test's storage — new signals must still show (not gated).
+    const { body } = await json('GET', '/api/signal');
+    const signal = body.newSignals.find((s: { mediaId: string }) => s.mediaId === 'simpsons-test');
+    expect(signal).toBeDefined();
+    expect(signal.season).toBe(36);
+    expect(signal.episode).toBe(14);
+  });
 });

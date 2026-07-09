@@ -67,6 +67,9 @@ const RawEnv = z.object({
   NTFY_URL: z.string().optional(),
   NTFY_TOPIC: z.string().optional(),
 
+  SUBTITLES_MODE: AdapterMode.default('mock'),
+  OPENSUBTITLES_API_KEY: z.string().optional(),
+
   // ---- Deck AI ----
   DECK_MODE: AdapterMode.default('mock'),
   ANTHROPIC_API_KEY: z.string().optional(),
@@ -117,6 +120,7 @@ export interface Config {
     downloadStation: AdapterConfig & { url?: string; user?: string; pass?: string };
     qbittorrent: AdapterConfig & { url?: string; user?: string; pass?: string };
     ntfy: AdapterConfig & { url?: string; topic?: string };
+    subtitles: AdapterConfig & { openSubtitlesApiKey?: string };
     deck: AdapterConfig & { apiKey?: string; model: string };
     auth: AdapterConfig & { allowlist: string[] };
   };
@@ -219,6 +223,10 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
         ...resolveAdapter('ntfy', e.NTFY_MODE, !!(e.NTFY_URL && e.NTFY_TOPIC), warnings),
         url: e.NTFY_URL,
         topic: e.NTFY_TOPIC,
+      },
+      subtitles: {
+        ...resolveAdapter('subtitles', e.SUBTITLES_MODE, !!e.OPENSUBTITLES_API_KEY, warnings),
+        openSubtitlesApiKey: e.OPENSUBTITLES_API_KEY,
       },
       deck: {
         ...resolveAdapter('deck', e.DECK_MODE, !!e.ANTHROPIC_API_KEY, warnings),
